@@ -40,15 +40,21 @@ module serial_adder_using_logic_operations_only
   output sum
 );
 
-  // Task:
-  // Implement a serial adder using only ^ (XOR), | (OR), & (AND), ~ (NOT) bitwise operations.
-  //
-  // Notes:
-  // See Harris & Harris book
-  // or https://en.wikipedia.org/wiki/Adder_(electronics)#Full_adder webpage
-  // for information about the 1-bit full adder implementation.
-  //
-  // See the testbench for the output format ($display task).
+  logic carry;
+  logic sum_temp;
 
+  assign sum_temp = a ^ b ^ carry;
+  logic carry_next;
+  assign carry_next = (a & b) | (carry & (a ^ b));
+
+  always_ff @ (posedge clk) begin
+    if (rst) begin
+      carry <= 1'b0;
+    end else begin
+      carry <= carry_next;
+    end
+  end
+
+  assign sum = sum_temp;
 
 endmodule
