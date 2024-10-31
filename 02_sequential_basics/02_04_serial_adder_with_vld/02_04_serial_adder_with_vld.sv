@@ -13,21 +13,24 @@ module serial_adder_with_vld
   output sum
 );
 
-  // Task:
-  // Implement a module that performs serial addition of two numbers
-  // (one pair of bits is summed per clock cycle).
-  //
-  // It should have input signals a and b, and output signal sum.
-  // Additionally, the module have two control signals, vld and last.
-  //
-  // The vld signal indicates when the input values are valid.
-  // The last signal indicates when the last digits of the input numbers has been received.
-  //
-  // When vld is high, the module should add the values of a and b and produce the sum.
-  // When last is high, the module should output the sum and reset its internal state, but
-  // only if vld is also high, otherwise last should be ignored.
-  //
-  // When rst is high, the module should reset its internal state.
+  logic carry;
+  logic sum_temp;
 
+  assign sum_temp = (vld) ? (a ^ b ^ carry) : 1'b0;
+  logic carry_next;
+  assign carry_next = (vld) ? ((a & b) | (carry & (a ^ b))) : carry;
+
+  always_ff @ (posedge clk) begin
+    if (rst) begin
+      carry <= 1'b0;
+    end else if (vld) begin
+      carry <= carry_next;
+    end
+    if (last && vld) begin
+      carry <= 1'b0;
+    end
+  end
+
+  assign sum = sum_temp;
 
 endmodule
