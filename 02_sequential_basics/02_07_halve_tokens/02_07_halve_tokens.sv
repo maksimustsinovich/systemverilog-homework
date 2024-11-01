@@ -24,8 +24,8 @@ module halve_tokens
 
     always_ff @ (posedge clk) begin
         if (rst) begin
-            b_temp = 0;
-            count = 0;
+            b_temp <= 0;
+            count <= 0;
         end else begin
             b_temp <= 0;
             if (a) begin
