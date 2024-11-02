@@ -9,19 +9,39 @@ module round_robin_arbiter_with_2_requests
     input  [1:0] requests,
     output [1:0] grants
 );
-    // Task:
-    // Implement a "arbiter" module that accepts up to two requests
-    // and grants one of them to operate in a round-robin manner.
-    //
-    // The module should maintain an internal register
-    // to keep track of which requester is next in line for a grant.
-    //
-    // Note:
-    // Check the waveform diagram in the README for better understanding.
-    //
-    // Example:
-    // requests -> 01 00 10 11 11 00 11 00 11 11
-    // grants   -> 01 00 10 01 10 00 01 00 10 01
 
+    reg [1:0] prev;
+    reg [1:0] curr;
+
+    always_comb begin
+        case (requests)
+            2'b00: begin
+                curr = requests;
+            end
+            2'b01: begin
+                curr = requests;
+                prev = curr;
+            end
+            2'b10: begin
+                curr = requests;
+                prev = curr;
+            end
+            2'b11: begin
+                curr = ~prev;
+                prev = ~prev;
+            end
+        endcase
+    end
+
+    always_ff @ (posedge clk) begin
+        if (rst) begin
+            prev <= 2'b00;
+            curr <= 2'b00;
+        end else begin
+
+        end
+    end
+
+    assign grants = curr;
 
 endmodule
