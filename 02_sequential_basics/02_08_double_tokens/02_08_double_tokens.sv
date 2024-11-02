@@ -25,5 +25,33 @@ module double_tokens
     // a -> 10010011000110100001100100
     // b -> 11011011110111111001111110
 
+    logic [7:0] counter;
+    logic overflow_error;
+    logic b_temp;
+
+    always_ff @ (posedge clk) begin
+        if (rst) begin
+            overflow_error <= 0;
+            counter <= 0;
+            b_temp <= 0;
+        end else begin
+            b_temp <= 0;
+            if (a) begin
+                counter <= counter + 1;
+                b_temp <= 1;
+            end else begin
+                if (counter > 0) begin
+                    b_temp <= 1;
+                    counter <= counter - 1;
+                end
+            end
+            if (counter > 200) begin
+                overflow_error <= 1;
+            end
+        end
+    end
+
+    assign b = b_temp;
+    assign overflow = overflow_error;
 
 endmodule
