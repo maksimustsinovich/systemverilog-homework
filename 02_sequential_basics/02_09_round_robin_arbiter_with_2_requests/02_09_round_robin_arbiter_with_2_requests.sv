@@ -37,8 +37,6 @@ module round_robin_arbiter_with_2_requests
         if (rst) begin
             prev <= 2'b00;
             curr <= 2'b00;
-        end else begin
-
         end
     end
 
